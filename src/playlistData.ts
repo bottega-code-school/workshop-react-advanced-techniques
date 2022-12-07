@@ -7,11 +7,6 @@ const _data = [
       "In this live coding workshop you'll learn how to build out a drag and drop interface in React by implementing the React Beautiful DND library.",
   },
   {
-    id: null,
-    title: null,
-    description: null,
-  },
-  {
     id: "TZw0EAjcH7o",
     title: "Mouse and Viewport Based React Hooks",
     description:
