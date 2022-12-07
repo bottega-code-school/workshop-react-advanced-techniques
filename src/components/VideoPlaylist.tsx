@@ -1,6 +1,8 @@
 import * as React from "react";
 import ReactPlayer from "react-player";
 import playlistData from "../playlistData";
+import { Button } from "./Button";
+import Stack from "./dom-elements/Stack";
 
 const playIcon = require("../../static/assets/images/play.png");
 
@@ -12,12 +14,16 @@ type MediaType = {
   description: string;
 };
 
+type VideoConfigType = {
+  playing: boolean;
+  activeVideo?: MediaType;
+};
+
 export default function VideoPlaylist() {
   const media: MediaType[] = playlistData;
-  const [videoConfig, setVideoConfig] = React.useState<{
-    playing: boolean;
-    activeVideo?: MediaType;
-  }>({ playing: false });
+  const [videoConfig, setVideoConfig] = React.useState<VideoConfigType>({
+    playing: false,
+  });
 
   React.useEffect(() => {
     setVideoConfig({
@@ -37,9 +43,23 @@ export default function VideoPlaylist() {
     height: "439px",
   };
 
+  const renderItem = (item: MediaType) =>
+    renderPlaylistListItem({
+      item,
+      isActive:
+        videoConfig?.activeVideo?.id === item.id && videoConfig?.playing,
+      onClick: () => setVideoConfig({ playing: true, activeVideo: item }),
+    });
+
   return (
     <div className="playlist">
-      <div className="playlist-title">React Playlist</div>
+      <div className="playlist-header">
+        <div className="playlist-title">React Playlist</div>
+        <Stack direction="row">
+          <Button primary>Refresh</Button>
+          <Button warning>Delete</Button>
+        </Stack>
+      </div>
 
       <div className="playlist-media-container">
         <div className="playlist-media-player">
@@ -92,28 +112,40 @@ export default function VideoPlaylist() {
         </div>
 
         <div className="playlist-list">
-          {media?.map((item) => (
-            <a
-              onClick={() =>
-                setVideoConfig({ playing: true, activeVideo: item })
-              }
-              className="playlist-item"
-              key={item.id}
-            >
-              <img className="thumb" src={item.thumbnailSrc} />
-
-              <div className="playlist-content">
-                <div className="playlist-content-title">{item.title}</div>
-
-                {videoConfig?.activeVideo?.id === item.id &&
-                  videoConfig?.playing && (
-                    <div className="playlist-content-status">PLAYING</div>
-                  )}
-              </div>
-            </a>
-          ))}
+          {media?.filter((i) => i.id)?.map(renderItem)}
         </div>
       </div>
     </div>
   );
 }
+
+export const renderPlaylistListItem = (args: {
+  item: MediaType;
+  isActive: boolean;
+  onClick: () => void;
+}) => {
+  try {
+    const { item, onClick, isActive } = args;
+
+    console.log("item: ", item);
+
+    return (
+      <a onClick={onClick} className="playlist-item" key={item.id}>
+        {item.thumbnailSrc && !item.thumbnailSrc.includes("null") && (
+          <img className="thumb" src={item.thumbnailSrc} />
+        )}
+
+        <div className="playlist-content">
+          <div className="playlist-content-title">
+            {item.title?.toUpperCase()}
+          </div>
+
+          {isActive && <div className="playlist-content-status">PLAYING</div>}
+        </div>
+      </a>
+    );
+  } catch (error) {
+    console.error("Error in renderPlaylistListItem: ", error);
+    return <div />;
+  }
+};

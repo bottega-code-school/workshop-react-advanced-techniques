@@ -2,6 +2,7 @@
   --highlight: #141926;
   --bg-highlight: #272c3a;
   --primary: #129fc0;
+  --primary_dark: #0e7b93;
   --off-white: #f6f6f6;
   --sans: "Noto Sans JP", sans-serif;
   --border-radius: 5px;
@@ -339,4 +340,100 @@ button {
       padding-left: 8px;
     }
   }
+}
+
+.playlist-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+// buttons
+
+@mixin baseShadow {
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+@mixin baseBtn(
+  $initialTextColor,
+  $hoverTextColor,
+  $initialBorderColor,
+  $activeBorderColor,
+  $initialBgColor,
+  $hoverBgColor
+) {
+  @include flexCenter();
+  text-transform: unset;
+  background-image: linear-gradient(
+    to right,
+    $initialBgColor,
+    $initialBorderColor
+  );
+  width: fit-content;
+  border: 1px solid $initialBorderColor;
+  border-radius: 3px;
+  color: $initialTextColor;
+  padding: 6px 20px;
+  cursor: pointer;
+  position: relative;
+  transition: 0.5s linear;
+  z-index: 1;
+
+  &::before {
+    position: absolute;
+    content: "";
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-image: linear-gradient(to right, $hoverBgColor, $hoverBgColor);
+    z-index: -1;
+    transition: opacity 0.5s linear;
+    opacity: 0;
+  }
+
+  .btn-label-container {
+    @include dtBtnLabelContainer();
+  }
+
+  &:hover {
+    &::before {
+      opacity: 1;
+    }
+
+    border: 1px solid $activeBorderColor;
+    color: $hoverTextColor;
+  }
+}
+
+@mixin dtBtnLabelContainer {
+  @include flexCenter();
+  width: 100%;
+  height: 100%;
+  padding: 0px 15px;
+}
+
+.btn-primary {
+  @include baseBtn(
+    white,
+    white,
+    var(--primary_dark),
+    var(--primary),
+    var(--primary),
+    var(--primary_dark)
+  );
+}
+
+.btn-warning {
+  @include baseBtn(white, white, red, rgb(207, 6, 6), rgb(207, 6, 6), red);
+}
+
+.stack-row {
+  display: flex;
+  align-items: center;
+}
+
+.stack-column {
+  display: flex;
+  flex-direction: column;
 }
